@@ -1,0 +1,21 @@
+[project]
+name = "tool-test-mini-notes-summary-12345678"
+version = "0.1.0"
+description = "Mini Notes Executa that summarizes notes through host sampling/createMessage."
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest>=8.0"]
+build = ["pyinstaller>=6.19.0"]
+
+[project.scripts]
+"tool-test-mini-notes-summary-12345678" = "mini_notes_summary:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+only-include = ["mini_notes_summary.py", "executa_manifest.py", "executa_sdk"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

@@ -1,0 +1,15 @@
+{
+  "slug": "mini-notes",
+  "name": "Mini Notes with LLM Summary",
+  "version": "0.1.0",
+  "tagline": "Capture small notes and summarize them through an Anna Executa.",
+  "description": "A local-first Anna App example whose notes are stored exclusively through the Anna storage Host API. Summaries are requested through the bundled mini-notes-summary Executa rather than through a direct LLM API.",
+  "category": "productivity",
+  "pricing_model": "free",
+  "bundled_executas": {
+    "mini-notes-summary": {
+      "path": "./executas/mini-notes-summary-python"
+    }
+  }
+}
+

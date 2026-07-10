@@ -1,0 +1,17 @@
+{
+  "name": "mini-notes-summary",
+  "display_name": "Mini Notes Summary",
+  "version": "0.1.0",
+  "description": "Summarizes ordered Mini Notes by asking the Anna host to sample an LLM.",
+  "runtime": {
+    "binary": {
+      "entrypoint": {
+        "default": "bin/mini-notes-summary",
+        "windows-x86_64": "bin/mini-notes-summary.exe"
+      },
+      "permissions": {
+        "bin/mini-notes-summary": "0o755"
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "slug": "mini-notes-summary",
+  "name": "Mini Notes Summary",
+  "version": "0.1.0",
+  "executa_type": "tool",
+  "description": "Summarizes Mini Notes by requesting host LLM sampling over reverse JSON-RPC.",
+  "tool_id": "tool-test-mini-notes-summary-12345678",
+  "type": "python",
+  "enabled": true,
+  "distribution": {
+    "active": "local",
+    "profiles": {
+      "local": {
+        "type": "local",
+        "supports_protocol": true
+      }
+    }
+  }
+}
+

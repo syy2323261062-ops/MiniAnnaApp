@@ -1,0 +1,32 @@
+{
+  "name": "mini-notes",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "validate": "anna-app validate --strict",
+    "app:dev": "anna-app dev --no-llm",
+    "dev:anna:no-llm": "anna-app dev --no-llm",
+    "executa:mock": "anna-app executa dev --dir executas/mini-notes-summary-python --mock-sampling fixtures/sampling-summary.jsonl --invoke summarize_notes --args \"{\\\"notes\\\":[{\\\"id\\\":\\\"n1\\\",\\\"order\\\":1,\\\"content\\\":\\\"明天跟客户 follow up\\\"},{\\\"id\\\":\\\"n2\\\",\\\"order\\\":2,\\\"content\\\":\\\"修复登录 bug\\\"},{\\\"id\\\":\\\"n3\\\",\\\"order\\\":3,\\\"content\\\":\\\"准备 Workshop 内容\\\"}]}\"",
+    "test:executa": "uv run --python 3.12 --with pytest python -m pytest executas/mini-notes-summary-python/tests -v",
+    "test:protocol": "uv run --python 3.12 python scripts/protocol_smoke.py --record evidence/protocol-smoke.jsonl",
+    "check:identity": "uv run --python 3.12 python scripts/check_identity.py",
+    "build:binary": "uv run --python 3.12 python scripts/build_binary.py",
+    "smoke:binary": "uv run --python 3.12 python scripts/smoke_binary.py",
+    "check:workflow": "uv run --python 3.12 --with pyyaml python scripts/check_workflow.py"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@anna-ai/cli": "^0.1.22",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.11"
+  }
+}

@@ -1,0 +1,3 @@
+# Offline fixture for `anna-app executa dev --mock-sampling` (CLI 0.1.37).
+{"ns":"sampling","method":"createMessage","match":{"contentIncludes":"明天跟客户 follow up"},"result":{"role":"assistant","content":{"type":"text","text":"这些笔记主要涉及客户跟进、登录问题修复和 Workshop 内容准备。"},"model":"mock-mini-notes","stopReason":"endTurn","usage":{"inputTokens":72,"outputTokens":18,"totalTokens":90}}}
+

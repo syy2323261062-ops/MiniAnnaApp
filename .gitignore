@@ -1,0 +1,12 @@
+node_modules/
+bundle/
+anna-executa-examples-main/
+.vite/
+*.tsbuildinfo
+__pycache__/
+.pytest_cache/
+*.py[cod]
+.venv/
+dist/
+staging/
+build/
