@@ -1,5 +1,7 @@
 # Mini Notes with LLM Summary
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 ## 1. Project Overview
 
 Mini Notes is a local Anna App for creating, viewing, deleting, and summarizing ordered notes. Notes are stored exclusively through the Anna storage Host API. Summaries are requested from the bundled `mini-notes-summary` Executa, which uses reverse JSON-RPC Sampling rather than a frontend LLM call or a deterministic fallback.
@@ -314,8 +316,8 @@ A real RC run should retain the Release and record its run URL, tag, three job r
 
 - Legacy harness storage persists only within the running local harness lifecycle; restarting `anna-app dev` is not required to preserve data.
 - The `--no-llm` harness intentionally cannot return a sampled summary; backend Sampling is tested with the mock fixture instead.
-- Core UI/Host API, absence of a fallback summary, no-LLM bridge behavior, sanitized RPC evidence, and four token-free screenshots are complete. The very short loading transition was not reliably observed and remains `NOT RUN` in the UI checklist.
+- Core UI/Host API, absence of a fallback summary, no-LLM bridge behavior, sanitized RPC evidence, and four token-free screenshots are complete. The very short loading transition was not reliably observed and is retained only as an additional `NOT OBSERVED` note; it is not a separate `question.md` acceptance requirement.
 - `docs/acceptance-matrix.md` distinguishes PASS, FAIL, BLOCKED, and NOT RUN; source presence alone is not UI evidence.
 - Local Windows native build and archive verification do not prove macOS builds.
 - Workflow static validation does not prove a real GitHub Actions run or Release upload.
-- No commit, push, workflow dispatch, tag, or Release operation should be performed without explicit user authorization and authenticated GitHub access.
+- Release operations require explicit authorization and authenticated GitHub access. An RC prerelease may be used for delivery verification; this document does not claim that a stable `v0.1.0` Release or an Anna App publication has occurred.
