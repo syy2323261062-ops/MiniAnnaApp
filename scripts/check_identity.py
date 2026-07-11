@@ -10,6 +10,8 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List
 
+from check_no_direct_llm import find_direct_llm_calls
+
 
 ROOT = Path(__file__).resolve().parents[1]
 APP_SLUG = "mini-notes"
@@ -86,6 +88,7 @@ def check_json_contracts() -> None:
         expect_equal("manifest.json:min_version", required[0].get("min_version"), VERSION)
     host_api = manifest.get("ui", {}).get("host_api", {})
     expect_equal("manifest.json:ui.host_api.tools", host_api.get("tools"), ["required:*"])
+    expect_equal("manifest.json:ui.host_api.llm", host_api.get("llm"), ["complete"])
 
     executa = read_json("executas/mini-notes-summary-python/executa.json")
     expect_equal("executa.json:slug", executa.get("slug"), HANDLE)
@@ -103,6 +106,14 @@ def check_source_contracts() -> None:
         fail("src/anna/tools.ts", "frontend fallback tool_id mismatch")
     if f'TOOL_METHOD = "{TOOL_METHOD}"' not in tools:
         fail("src/anna/tools.ts", "frontend Tool method mismatch")
+    if "anna.tools.invoke" not in tools:
+        fail("src/anna/tools.ts", "frontend anna.tools.invoke call missing")
+
+    for finding in find_direct_llm_calls(ROOT / "src"):
+        fail(
+            f"{finding.relative_path}:{finding.line_number}",
+            f"direct frontend LLM call matched {finding.pattern!r}",
+        )
 
     storage = (ROOT / "src/anna/storage.ts").read_text(encoding="utf-8")
     if f'STORAGE_KEY = "{STORAGE_KEY}"' not in storage:
@@ -212,4 +223,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

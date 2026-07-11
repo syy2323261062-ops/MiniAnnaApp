@@ -36,7 +36,8 @@
     ],
     "host_api": {
       "storage": ["get", "set"],
-      "tools": ["required:*"]
+      "tools": ["required:*"],
+      "llm": ["complete"]
     },
     "csp_overrides": {
       "script-src": ["'self'"],
@@ -49,4 +50,3 @@
     "user_id": 1
   }
 }
-

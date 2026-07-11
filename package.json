@@ -13,6 +13,7 @@
     "test:executa": "uv run --python 3.12 --with pytest python -m pytest executas/mini-notes-summary-python/tests -v",
     "test:protocol": "uv run --python 3.12 python scripts/protocol_smoke.py --record evidence/protocol-smoke.jsonl",
     "check:identity": "uv run --python 3.12 python scripts/check_identity.py",
+    "check:no-direct-llm": "uv run --python 3.12 python scripts/check_no_direct_llm.py",
     "build:binary": "uv run --python 3.12 python scripts/build_binary.py",
     "smoke:binary": "uv run --python 3.12 python scripts/smoke_binary.py",
     "check:workflow": "uv run --python 3.12 --with pyyaml python scripts/check_workflow.py"

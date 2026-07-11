@@ -103,6 +103,12 @@ npm run dev:anna:no-llm
 
 Open the local URL printed by the CLI. This starts the default legacy in-memory storage harness and the bundled local Executa without using an Anna login or a real LLM.
 
+CLI 0.1.37 pins `anna-app-runtime-local` 0.2.0a14. That runtime maps an Executa reverse `sampling/createMessage` request to an internal `llm.complete` dispatcher call and incorrectly sends it through the App `ui.host_api` ACL. The manifest therefore declares `ui.host_api.llm.complete` as a stock-CLI compatibility workaround. Mini Notes production frontend source must not call that API; enforce this separately with:
+
+```powershell
+npm run check:no-direct-llm
+```
+
 The required browser acceptance checklist is in `evidence/ui-harness-checklist.md`. Do not mark it PASS without completing the real interactions.
 
 ## 9. Test Notes CRUD
@@ -129,15 +135,21 @@ The app does not use localStorage, IndexedDB, a filesystem, or a custom HTTP API
 
 ## 10. Why Summarize Fails under `--no-llm`
 
-The UI still calls `anna.tools.invoke` when Summarize is clicked. In the locally observed CLI 0.1.37 RPC log, that invocation reached `tool-test-mini-notes-summary-12345678` with method `summarize_notes`, after which the disabled LLM path returned:
+The frontend always calls `anna.tools.invoke`; it does not call `anna.llm.complete`. The expected local path is:
 
 ```text
-[-32603] manifest 不授予 "LLM.complete"
+anna.tools.invoke
+  -> Mini Notes Summary Executa
+  -> sampling/createMessage
+  -> CLI no-LLM bridge
+  -> harness started with --no-llm
 ```
 
-This is the current environment’s equivalent no-LLM/LLM-disabled error text. It proves the `anna.tools.invoke` wiring was exercised; it is not permission to add `anna.llm.complete` to the frontend and must not be hidden by a fixed summary or HTTP fallback. The RPC log also confirms no fallback summary was generated.
+CLI 0.1.37's pinned runtime incorrectly applies the App iframe ACL to the internal `llm.complete` dispatcher call used for reverse Sampling. `ui.host_api.llm.complete` is declared only to let that Executa-originated request cross the stock local runtime. It is not used by frontend business code, and `scripts/check_no_direct_llm.py` fails if a direct call is introduced under `src/`.
 
-Page loading state, visible error rendering, and continued CRUD after the error remain manual UI checks. Backend reverse Sampling is independently verified by `npm run executa:mock` (`anna-app executa dev --mock-sampling`) and `npm run test:protocol` (`protocol_smoke.py`), both without a real LLM.
+The earlier `manifest 不授予 "LLM.complete"` result was a permission-stage failure, not an equivalent `--no-llm` result. With the compatibility ACL in place, the harness must instead return an error explicitly caused by `--no-llm`. It must not be hidden by a fixed summary, HTTP fallback, or UI fixture.
+
+Backend reverse Sampling is independently verified by `npm run executa:mock` (`anna-app executa dev --mock-sampling`) and `npm run test:protocol` (`protocol_smoke.py`), both without a real LLM.
 
 ## 11. Test Executa with `--mock-sampling`
 
@@ -191,6 +203,7 @@ Run these checks together:
 
 ```powershell
 npm run check:identity
+npm run check:no-direct-llm
 npm run test:executa
 npm run test:protocol
 npm run executa:mock
