@@ -164,7 +164,13 @@ anna.tools.invoke
 
 CLI 0.1.37's pinned runtime incorrectly applies the App iframe ACL to the internal `llm.complete` dispatcher call used for reverse Sampling. `ui.host_api.llm.complete` is declared only to let that Executa-originated request cross the stock local runtime. It is not used by frontend business code, and `scripts/check_no_direct_llm.py` fails if a direct call is introduced under `src/`.
 
-The earlier `manifest 不授予 "LLM.complete"` result was a permission-stage failure, not an equivalent `--no-llm` result. With the compatibility ACL in place, the harness must instead return an error explicitly caused by `--no-llm`. It must not be hidden by a fixed summary, HTTP fallback, or UI fixture.
+The earlier `manifest 不授予 "LLM.complete"` result was a permission-stage failure, not an equivalent `--no-llm` result. With the compatibility ACL in place, the real CLI 0.1.37 dashboard recording now reaches the bridge and returns:
+
+```text
+[-32603] harness started with --no-llm
+```
+
+The sanitized evidence is `evidence/ui-no-llm-rpc.jsonl`; it also records `window.hello` with the compatibility `llm.complete` scope, storage CRUD, iframe restoration, correct `tools.invoke` arguments, and successful CRUD after the Tool error. The error must not be hidden by a fixed summary, HTTP fallback, or UI fixture.
 
 Backend reverse Sampling is independently verified by `npm run executa:mock` (`anna-app executa dev --mock-sampling`) and `npm run test:protocol` (`protocol_smoke.py`), both without a real LLM.
 
@@ -308,7 +314,7 @@ A real RC run should retain the Release and record its run URL, tag, three job r
 
 - Legacy harness storage persists only within the running local harness lifecycle; restarting `anna-app dev` is not required to preserve data.
 - The `--no-llm` harness intentionally cannot return a sampled summary; backend Sampling is tested with the mock fixture instead.
-- UI acceptance remains pending until the browser checklist is actually completed and screenshots are captured.
+- Core UI/Host API, absence of a fallback summary, no-LLM bridge behavior, sanitized RPC evidence, and four token-free screenshots are complete. The very short loading transition was not reliably observed and remains `NOT RUN` in the UI checklist.
 - `docs/acceptance-matrix.md` distinguishes PASS, FAIL, BLOCKED, and NOT RUN; source presence alone is not UI evidence.
 - Local Windows native build and archive verification do not prove macOS builds.
 - Workflow static validation does not prove a real GitHub Actions run or Release upload.

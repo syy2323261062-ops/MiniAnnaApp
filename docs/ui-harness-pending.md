@@ -1,6 +1,6 @@
 # UI harness manual acceptance pending
 
-Status: **PENDING** until a clean CLI 0.1.37 browser session completes the checklist and writes real evidence.
+Status: **PARTIALLY COMPLETE**. Core question.md UI/Host API behavior, absence of a fallback summary, the real no-LLM bridge path, and all four repository screenshots are complete. Only a reliably observed loading transition remains `NOT RUN` because it completed too quickly to verify visually.
 
 ## Compatibility prerequisite
 
@@ -23,6 +23,10 @@ npm run build
 npm run dev:anna:no-llm
 ```
 
-The real session must verify storage CRUD, blank-input rejection, input clearing, ordered notes, deletion, iframe-lifecycle restoration, Summarize loading, `tools.invoke`, `sampling/createMessage`, an explicit `--no-llm` bridge error, no fallback summary, and working CRUD after the error.
+The real session verified storage CRUD, blank-input rejection, input clearing, ordered notes, deletion, iframe-lifecycle restoration, `tools.invoke`, the reverse request reaching the explicit `--no-llm` bridge, and working create/delete operations after the error. The sanitized combined recording is `evidence/ui-no-llm-rpc.jsonl`.
 
-Evidence must be saved to the five paths listed in `evidence/ui-harness-checklist.md`. No item may be marked PASS from source inspection alone.
+Still required before this document can be marked resolved:
+
+- optionally repeat Summarize with throttling or video if visual evidence of the very short `Working…` transition is desired.
+
+No item is marked PASS from source inspection alone.
