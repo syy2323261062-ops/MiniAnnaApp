@@ -41,6 +41,6 @@
 - `evidence/ui-notes-created.png`
 - `evidence/ui-note-deleted.png`
 - `evidence/ui-no-llm-error.png`
-- `evidence/ui-no-llm-rpc.log`
+- `evidence/ui-no-llm-rpc.jsonl`
 
 Only results observed in the real browser/RPC session may be marked PASS. The compatibility declaration in `manifest.json` does not count as UI evidence. Backend Sampling remains independently covered by `npm run executa:mock` and `npm run test:protocol`.

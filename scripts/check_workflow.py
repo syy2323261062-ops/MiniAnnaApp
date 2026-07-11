@@ -66,7 +66,35 @@ def main() -> int:
     require(permissions.get("contents") == "write", "permissions.contents must be write")
 
     jobs = as_mapping(workflow.get("jobs"), "jobs")
+    validate_app = as_mapping(jobs.get("validate-app"), "jobs.validate-app")
+    require(
+        validate_app.get("runs-on") == "ubuntu-latest",
+        "validate-app must run on ubuntu-latest",
+    )
+    validate_text = json.dumps(validate_app, ensure_ascii=False)
+    for required in (
+        "actions/checkout@v4",
+        "actions/setup-node@v4",
+        '"node-version": "22"',
+        "astral-sh/setup-uv@v6",
+        '"python-version": "3.12"',
+        "npm ci",
+        "npm run build",
+        "npm run validate",
+        "npm run check:identity",
+        "npm run check:no-direct-llm",
+        "npm run test:protocol",
+        "npm run executa:mock",
+    ):
+        require(required in validate_text, f"validate-app is missing {required}")
+
     build = as_mapping(jobs.get("build"), "jobs.build")
+    build_needs = build.get("needs")
+    require(
+        build_needs == "validate-app"
+        or (isinstance(build_needs, list) and "validate-app" in build_needs),
+        "build job must need validate-app",
+    )
     strategy = as_mapping(build.get("strategy"), "jobs.build.strategy")
     matrix = as_mapping(strategy.get("matrix"), "jobs.build.strategy.matrix")
     include = matrix.get("include")
@@ -125,9 +153,10 @@ def main() -> int:
     )
 
     print(
-        "Workflow static validation passed: YAML parsed; 3 runners; 3 platform "
-        "keys; extensions; contents:write; native smoke; archive verify; "
-        "artifact aggregation; GitHub Release upload"
+        "Workflow static validation passed: validate-app (Node 22, Python 3.12, "
+        "npm ci, App build/strict validation, identity, no-direct-LLM, protocol, "
+        "mock Sampling); 3 native runners/platform keys; contents:write; native "
+        "smoke; archive verify; artifact aggregation; GitHub Release upload"
     )
     return 0
 

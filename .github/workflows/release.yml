@@ -15,8 +15,52 @@ permissions:
   contents: write
 
 jobs:
+  validate-app:
+    name: Validate App and offline Sampling
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Set up uv and Python 3.12
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+          enable-cache: true
+
+      - name: Install exact npm dependencies
+        run: npm ci
+
+      - name: Build App bundle
+        run: npm run build
+
+      - name: Strictly validate App manifest
+        run: npm run validate
+
+      - name: Check fixed identities
+        run: npm run check:identity
+
+      - name: Reject direct frontend LLM calls
+        run: npm run check:no-direct-llm
+
+      - name: Test RPC log sanitizer
+        run: npm run test:sanitize
+
+      - name: Run offline protocol smoke
+        run: npm run test:protocol
+
+      - name: Run CLI mock Sampling integration
+        run: npm run executa:mock
+
   build:
     name: Build ${{ matrix.platform }}
+    needs: validate-app
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false

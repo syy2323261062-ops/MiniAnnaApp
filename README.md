@@ -55,6 +55,7 @@ fixtures/sampling-summary.jsonl       offline Sampling fixture
 scripts/                              identity, protocol, binary and CI checks
 evidence/                             protocol and UI acceptance evidence
 docs/                                 packaging and test notes
+docs/acceptance-matrix.md             question.md requirement-by-requirement status
 .github/workflows/release.yml         three-platform Release workflow
 ```
 
@@ -69,9 +70,13 @@ docs/                                 packaging and test notes
 
 ## 5. Install Dependencies
 
+The committed lock file pins `@anna-ai/cli` exactly to 0.1.37 and uses the official npm registry. Install the reproducible dependency set with:
+
 ```powershell
-npm install
+npm ci
 ```
+
+Use `npm install` only when intentionally updating the lock file.
 
 If the first harness startup must create its Python environment and exceeds the CLI startup window, pre-warm only the project Executa environment:
 
@@ -110,6 +115,18 @@ npm run check:no-direct-llm
 ```
 
 The required browser acceptance checklist is in `evidence/ui-harness-checklist.md`. Do not mark it PASS without completing the real interactions.
+
+Start dashboard recording before the UI interactions, but keep the raw download outside the repository (or under ignored `evidence/raw/`). Sanitize it before adding evidence:
+
+```powershell
+uv run --python 3.12 python scripts/sanitize_ui_rpc_log.py `
+  <raw-dashboard-recording.jsonl> `
+  evidence/ui-no-llm-rpc.jsonl
+
+npm run test:sanitize
+```
+
+The sanitizer removes `auth.refresh` records, redacts nested credentials/token fields and JWT/Bearer values, and refuses to overwrite its input.
 
 ## 9. Test Notes CRUD
 
@@ -267,7 +284,7 @@ The native matrix is:
 | `macos-15-intel` | `darwin-x86_64` | `tar.gz` |
 | `windows-latest` | `windows-x86_64` | `zip` |
 
-Every build job runs pytest, identity checks, PyInstaller, native binary smoke, and archive verification. The Release job waits for the complete matrix, downloads all artifacts, requires exactly three filenames, and only then creates or updates the Release.
+The independent `validate-app` job uses Node.js 22, Python 3.12, `npm ci`, the frontend build, strict App validation, identity/no-direct-LLM checks, sanitizer tests, protocol smoke, and CLI mock Sampling. Every native build job depends on that job, then runs pytest, identity checks, PyInstaller, native binary smoke, and archive verification. The Release job waits for the complete matrix, downloads all artifacts, requires exactly three filenames, and only then creates or updates the Release.
 
 Workflow artifacts are intermediate CI outputs. Release assets are the three archives uploaded by the final Release job. Check workflow structure locally with:
 
@@ -292,6 +309,7 @@ A real RC run should retain the Release and record its run URL, tag, three job r
 - Legacy harness storage persists only within the running local harness lifecycle; restarting `anna-app dev` is not required to preserve data.
 - The `--no-llm` harness intentionally cannot return a sampled summary; backend Sampling is tested with the mock fixture instead.
 - UI acceptance remains pending until the browser checklist is actually completed and screenshots are captured.
+- `docs/acceptance-matrix.md` distinguishes PASS, FAIL, BLOCKED, and NOT RUN; source presence alone is not UI evidence.
 - Local Windows native build and archive verification do not prove macOS builds.
 - Workflow static validation does not prove a real GitHub Actions run or Release upload.
 - No commit, push, workflow dispatch, tag, or Release operation should be performed without explicit user authorization and authenticated GitHub access.
